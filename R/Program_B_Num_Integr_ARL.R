@@ -1,17 +1,23 @@
-library(pracma)
-tic()
-#clear()
-#In-Control
-#UCL=19.0763 #Calculated with program A    #se acabo de usar o A, a variável já está definida
-#LCL=9.83055 #Calculated with program A
-#out-of-control
-k=5.4 #shape
-lambda=2.2 #scale
 
-f <- function(v, w, z, y, x){
-  dweibull(x, k,lambda)* dweibull (y, k,lambda)* dweibull (z, k,lambda)* dweibull (w, k,lambda)* dweibull (v, k,lambda)
+#rm(list = ls())
+t0 <- Sys.time()
+
+#In-Control
+#UCLy <- 12.85017 #Calculated with program A    #same variables from program A
+#LCLy <- 7.094406 #Calculated with program A
+
+#out-of-control
+lambda_1 <- 1.9 #scale on H1 (out of control)
+k_1 <- 5.4  #shape on H1 (out of control)
+
+# to calculate ARL_0, use lambda_0 and k_0 values:
+#lambda_1 <- 2.2 #scale on H0 (to calculate ARL_0)
+#k_1 <- 5.4  #shape on H0 (out of control)
+
+f <- function(x, y, z, w, v){
+  dweibull(x, k_1,lambda_1)* dweibull (y, k_1,lambda_1)* dweibull (z, k_1,lambda_1)* dweibull (w, k_1,lambda_1)* dweibull (v, k_1,lambda_1)
 }
-L=LCL
+L <- LCLy
 T1a<-integrate(Vectorize(function(x){
   integrate(Vectorize(function(y){
     integrate(Vectorize(function(z){
@@ -25,8 +31,7 @@ T1a<-integrate(Vectorize(function(x){
 }), lower = 0, upper = L)
 
 
-L=UCL
-
+L <-UCLy
 T2a<-integrate(Vectorize(function(x){
   integrate(Vectorize(function(y){
     integrate(Vectorize(function(z){
@@ -39,10 +44,11 @@ T2a<-integrate(Vectorize(function(x){
   }), lower = 0, upper = L-x)$value
 }), lower = 0, upper = L)
 
-ARL1=(1/(T1a$value+(1-T2a$value)))
+ARL_1=(1/(T1a$value+(1-T2a$value)))
 
-cat('UCL=',UCL,"\n")
-cat('LCL=',LCL,"\n")
-cat('ARL1=',ARL1,"\n")
-toc()
+cat('UCLy = ', UCLy,"\n")
+cat('LCLy = ', LCLy,"\n")
+cat('ARL_1 = ', ARL_1,"\n")
+
+Sys.time() - t0
 
