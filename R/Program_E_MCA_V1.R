@@ -2,7 +2,7 @@ library(pracma)
 #library(expm)
 #library(writexl)
 library(spatstat.geom)
-{
+
 rm(list = ls())
 tic()
 
@@ -69,8 +69,8 @@ cat('UCLy =', UCLy, "\n")
 cat('ARL0 =', ARL0, "\n")
 cat('Delta =', Ly/(d), "\n")
 toc()
-beep(9)
-}
+
+
 ##################out-of-control#############
 tic()
 clear("M")
@@ -125,4 +125,5 @@ toc()
   
   
   
+
   
