@@ -1,22 +1,29 @@
-# R programs for "Monitoring the Weibull process mean with Shewhart control charts: A Markov chain approach"
+# R programs for "Control Chart Design for Weibull Processes via a Markov Chain Approach in the Absence of a Closed-Form Sum Distribution"
 
 This repository contains the R codes used in the paper:
 
 > Ferreira, R.C., Ho, L.L., Quinino, V.B., Quinino, R.C.  
-> *Monitoring the Weibull process mean with Shewhart control charts: A Markov chain approach*, Journal of Process Control, 2025 (submitted).
+> *Control Chart Design for Weibull Processes via a Markov Chain Approach in the Absence of a Closed-Form Sum Distribution*, IEEE, 2026 (submitted).
 
 ## Structure
 
-- `R/Program_A_num_int_CLs.R`: Computes LCL and UCL for the Weibull process using n-dimensional numerical integration.
-- `R/Program_B_num_int_ARL.R`: Computes ARL1 under out-of-control conditions using deterministic integration.
-- `R/Program_C_MCS.R`: Monte Carlo simulation for comparison with the deterministic results.
-- `R/Program_D_Ly.R`: 
-- `R/Program_E_MCA.R`: Implements the Markov Chain Approach (MCA) to obtain control limits and ARL values.
+- **R/Program_A_num_int_CLs.R**: Computes lower and upper control limits (LCL and UCL) for the Weibull process using n-dimensional deterministic numerical integration.
 
+- **R/Program_B_num_int_ARL.R**: Computes ARL₁ under out-of-control conditions using deterministic integration.
+
+- **R/Program_C_MCS.R**: Monte Carlo simulation for validation and comparison with deterministic results
+- **R/Program_D_Ly.R**:  Computes the upper truncation bound \( L_Y \) used in the discretization of the sum distribution.
+- **R/Program_E_MCA.R** : Implements the proposed Markov Chain Approach (MCA) to obtain:
+  - Control limits (CLs)
+  - In-control ARL (ARL₀)
+  - Out-of-control ARL (ARL₁)
+
+- **R/Program_F_BE.R**: Implements the Brook–Evans (BE) discretization method for ARL computation.  
+  
 ## Requirements
 
 - R (version X.Y.Z or later)
-- Packages: `expm`, `pracma`, `stats`, `graphics` (and others used in the scripts).
+- Packages: `expm`, `stats`, `graphics` (and others used in the scripts).
 
 ## How to run
 
@@ -25,3 +32,9 @@ This repository contains the R codes used in the paper:
 3. Set the working directory to the root of the repository.
 4. Source the script or run it section by section as indicated in the comments.
 
+## Notes
+
+- Programs A and B provide deterministic numerical benchmarks for small sample sizes.
+- Program C provides stochastic validation via Monte Carlo simulation.
+- Programs D and E contains the main contribution of the paper (MCA).
+- Program F implements the classical Brook–Evans approach for comparison purposes.
