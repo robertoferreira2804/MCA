@@ -22,7 +22,7 @@ This repository contains the R codes used in the paper:
   
 ## Requirements
 
-- R (version X.Y.Z or later)
+- R (version 4.2.0 or later)
 - Packages: `expm`, `stats`, `graphics` (and others used in the scripts).
 
 ## How to run
