@@ -4,13 +4,13 @@ if (!requireNamespace("Matrix", quietly = TRUE)) {
 }
 library(Matrix)
 
-d = 10000
-n = 30
-Ly = 140.8449  # n=5 ,  Ly = 30
+d = 1000
+n = 5
+Ly = 29.5555 
 lambda0 = 4
 k0 = 5
-LCLy = 96.0914
-UCLy = 123.6970
+LCLy = 12.5168
+UCLy = 23.6592
 epsX = 1e-6
 
 stopifnot(d >= 10, n >= 2, Ly > 0, lambda0 > 0, k0 > 0)
@@ -171,4 +171,5 @@ cat("nnz used / cap              =", used, "/", nnz_cap, "\n")
 cat("Time:", as.double(Sys.time()) - as.double(t0), "s\n")
 
 beepr::beep(5)
+
 ###############
