@@ -49,6 +49,7 @@ ARL_1=(1/(T1a$value+(1-T2a$value)))
 cat('UCLy = ', UCLy,"\n")
 cat('LCLy = ', LCLy,"\n")
 cat('ARL_1 = ', ARL_1,"\n")
+cat("Time:", as.double(Sys.time()) - as.double(t0), "s\n")
+beepr::beep(5)
 
-Sys.time() - t0
 
