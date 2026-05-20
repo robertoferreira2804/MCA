@@ -9,7 +9,7 @@ This repository contains the R codes used in the paper:
 
 - **R/Program_A_num_int_CLs.R**: Computes lower and upper control limits (LCL and UCL) for the Weibull process using n-dimensional deterministic numerical integration.
 
-- **R/Program_B_num_int_ARL.R**: Computes ARL₁ under out-of-control conditions using deterministic integration.
+- **R/Program_B_num_int_ARL.R**: Computes ARL₁ under out-of-control (or ARL₀ under in-control) conditions  using deterministic integration.
 
 - **R/Program_C_MCS.R**: Monte Carlo simulation for validation and comparison with deterministic results
 - **R/Program_D_Ly.R**:  Computes the upper truncation bound \( L_Y \) used in the discretization of the sum distribution.
