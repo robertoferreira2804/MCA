@@ -8,10 +8,10 @@
 # Ly -> final bound used in the MCA
 
 rm(list = ls())
-n <- 5         #Sample size
+n <- 3         #Sample size
 #on-control
-lambda_0 <- 4  #scale in-control
-k_0 <- 5       #shape in-control
+lambda_0 <- 2.2  #scale in-control
+k_0 <- 5.4       #shape in-control
 
 #out-of-control #####################
 k_1 <- 5        #shape. Use NULL if you do not want H1 calculation.
