@@ -22,11 +22,11 @@ k_0 <- 5.0           # Weibull shape (in-control)
 
 ######## ATTENTION: Ly = 30 for the didactic example Table 2 and 3
 Ly_0  <-  29.5555    # (using Program_D_Ly.R)
-Ly_0 <- 30             # didactic example- section IV-B; for general cases use Program_D_Ly.R
+Ly_0 <- 30             # didactic example- Table 3; for general cases use Program_D_Ly.R
 ######################################################
 
 #out-of-control
-k_1 <- NULL #shape. Use NULL if you do not want H1 calculation.
+k_1 <- 5 #shape. Use NULL if you do not want H1 calculation.
 lambda_1 <- 3.5 #scale to calculate ARL_1. Alternative: using NULL with sh below.
 sh <- -0.05  # only if lambda_1 = NULL
 Ly_1  <-  25.8611   # (using Program_D_Ly.R)
