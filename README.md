@@ -18,7 +18,7 @@ This repository contains the R codes used in the paper:
   - In-control ARL (ARL₀)
   - Out-of-control ARL (ARL₁)
 
-- **R/Program_F_BE.R**: Implements the Brook–Evans (BE) discretization method for ARL computation.  
+- **R/Program_F_BE.R**: Implements the Brook–Evans (BE) discretization method for Control limits (CLs) and ARL computation.  
   
 ## Requirements
 
