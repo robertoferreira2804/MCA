@@ -1,3 +1,20 @@
+# Program C: Monte Carlo simulation for Weibull control limits and ARL.
+# Default example: Section III, Table II (n = 5, 10 million runs).
+#
+# Other Monte Carlo studies in the paper:
+# - Section III, Figure 1: 500 replications of 10 million runs.
+# - Section IV-C: 500 replications of 10 million runs for ARL0 and ARL1.
+# - Section V, Table VIII: 500 replications of 10 million runs for each
+#   n in {5, 30, 100}, with lambda_0 = 4 and k_0 = 5.
+# - Section VI, Table IX: 50 million runs per sample size and shift
+#   scenario (n in {5, 10, 15, 30, 50}; lambda_0 = 4, k_0 = 5).
+# - Section VII: Monte Carlo validation of the scalability results,
+#   with 500 replications of 10 million runs. Table X reports MCA runtimes.
+#
+# For multiple replications, set B = 500 and use the corresponding
+# scenario inputs. This mode exports replicate results and means.
+# The histogram and confidence intervals are not generated here.
+
 rm(list = ls())
 t0 <- Sys.time()
 
@@ -5,20 +22,20 @@ n <- 5 # Sample size
 alpha <- 2 * (1 - pnorm(3)) # Desired significance level = 0.002699796
 lower_alpha <- alpha / 2
 upper_alpha <- 1 - alpha / 2
-runs <- 10000000 #(for Table 7 the value is 50000000)
+runs <- 10000000 # Runs per replication (50000000 for Table IX).
 
-B <- 1 # Use B = 1 for Tables 1 and 7; use B = 500 Table 5.
+B <- 1 # Use 1 for Tables II and IX, or 500 for the repeated studies above.
 
 # In-Control
 lambda_0  <- 2.2 #scale
 k_0 <- 5.4 #shape
 
 #out-of-control
-k_1 <- 5.4      #shape to calculate ARL_1. Use NULL if you do not want H1 calculation.
+k_1 <- 5.4      # Out-of-control shape.
 lambda_1 <- 1.9  #scale to calculate ARL_1. Alternative: using NULL with sh below.
-sh <- 0.05         # defined only if lambda_1 = NULL, for Table 7
+sh <- 0.05         # Relative mean shift when lambda_1 is NULL (Table IX).
 
-######## Table 7 with shift on E[X] ###########
+# Derive the scale from the relative mean shift when lambda_1 is NULL.
 if (is.null(lambda_1)) {
   ex_H0 <- lambda_0 * gamma(1 + 1 / k_0)
   ex_H1 <- ex_H0 * (1 + sh)
@@ -31,7 +48,7 @@ if (is.null(lambda_1)) {
 if (B == 1) {
   
   # ============================================================
-  # Tables 1 and 7
+  # Single replication (Table II or a scenario from Table IX)
   # ============================================================
   
   base_seed <- 1
@@ -47,8 +64,7 @@ if (B == 1) {
   Rsum0  <-  colSums(R0)
   ARL_0  <-  1 / (mean(Rsum0 < LCLy) + mean(Rsum0 > UCLy))
   
-  # Scenario-specific seed used to ensure reproducibility of the MCS results
-  # reported in the article, especially for the mean-shift scenarios in Table 7.
+  # Scenario-specific seed for the out-of-control simulation.
   set.seed(base_seed + 3000L + n + as.integer(10 * (k_1 * 10 + (sh + 0.5) * 100)))
   R1 <- (matrix(rweibull(n*runs,k_1,lambda_1),n,runs)) #to calculate ARL_1
   Rsum1  <-  colSums(R1)
@@ -62,7 +78,7 @@ if (B == 1) {
 } else {
   
   # ============================================================
-  # Table 5
+  # Multiple replications (Figure 1, Section IV-C, Table VIII, Section VII)
   # ============================================================
   
   if (!requireNamespace("writexl", quietly = TRUE)) {
@@ -107,4 +123,3 @@ if (B == 1) {
 
 cat("Time:", as.double(Sys.time()) - as.double(t0), "s\n")
 
-beepr::beep(5)
