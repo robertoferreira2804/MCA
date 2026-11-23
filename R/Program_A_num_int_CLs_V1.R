@@ -1,3 +1,5 @@
+# Section III
+
 rm(list = ls())
 t0 <- Sys.time()
 
@@ -59,6 +61,6 @@ UCLy=resultadoB$minimum
 cat('UCLy=',UCLy,"\n")
 cat('LCLy=',LCLy,"\n")
 cat("Time:", as.double(Sys.time()) - as.double(t0), "s\n")
-beepr::beep(5)
+
 
 
