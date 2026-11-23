@@ -1,18 +1,15 @@
+# Section III
 
-#rm(list = ls())
+rm(list = ls())
 t0 <- Sys.time()
 
-#In-Control
-#UCLy <- 12.85017 #Calculated with program A    #same variables from program A
-#LCLy <- 7.094406 #Calculated with program A
+# Control limits from Program A (Table II)
+UCLy <- 12.85017 #Calculated with program A    
+LCLy <- 7.094406 #Calculated with program A
 
 #out-of-control
 lambda_1 <- 1.9 #scale on H1 (out of control)
 k_1 <- 5.4  #shape on H1 (out of control)
-
-# to calculate ARL_0, use lambda_0 and k_0 values:
-#lambda_1 <- 2.2 #scale on H0 (to calculate ARL_0)
-#k_1 <- 5.4  #shape on H0 (out of control)
 
 f <- function(x, y, z, w, v){
   dweibull(x, k_1,lambda_1)* dweibull (y, k_1,lambda_1)* dweibull (z, k_1,lambda_1)* dweibull (w, k_1,lambda_1)* dweibull (v, k_1,lambda_1)
@@ -50,6 +47,5 @@ cat('UCLy = ', UCLy,"\n")
 cat('LCLy = ', LCLy,"\n")
 cat('ARL_1 = ', ARL_1,"\n")
 cat("Time:", as.double(Sys.time()) - as.double(t0), "s\n")
-beepr::beep(5)
 
 
