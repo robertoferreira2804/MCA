@@ -1,39 +1,42 @@
-#Ly Limit Determination
+# Program D: Upper truncation bound for the Weibull sample sum.
+# Default example: Section IV-A (n = 3, lambda = 2.2, k = 5.4).
 # Symbolic correspondence with the paper:
 # X ~ Weibull(lambda_0, k_0)
 # Y = sum_{i=1}^n X_i
 # Ly_I      -> inclusion-based upper bound (L_y^I)
 # Ly_naive -> naive upper bound (L_y^{naive})
 # Ly_C     -> Chernoff upper bound (L_y^C)
-# Ly -> final bound used in the MCA
+# Ly -> minimum of the inclusion and Chernoff bounds.
+# The naive bound is reported for comparison.
+# The Chernoff calculation uses a numerically truncated MGF.
 
 rm(list = ls())
 n <- 3         #Sample size
-#on-control
+#in-control
 lambda_0 <- 2.2  #scale in-control
 k_0 <- 5.4       #shape in-control
 
 #out-of-control #####################
-k_1 <- 5        #shape. Use NULL if you do not want H1 calculation.
+k_1 <- NULL        #shape. Use NULL if you do not want H1 calculation.
 lambda_1 <- 3.5 #scale to calculate ARL_1. Alternative: using NULL with sh below.
 sh <- -0.05     # only if lambda_1 = NULL
-######## Table 5 with shift on E[X] ###########
+# Optional relative mean shift for the out-of-control parameters (Table IX).
 
-if (is.null(lambda_1)) {
+if (!is.null(k_1) && is.null(lambda_1)) {
   ex_H0 <- lambda_0 * gamma(1 + 1 / k_0)
   ex_H1 <- ex_H0 * (1 + sh)
   lambda_1 <- ex_H1 / gamma(1 + 1 / k_1)  
 }
 ################################################
 
-p <- 1 - 1e-11 #P(Y<=Ly) ~ p
+p <- 1 - 1e-11 # Target cumulative probability (1 - epsilon).
 Lx  <-  qweibull(p^(1/n), shape = k_0, scale = lambda_0)
-Ly_I  <- n * Lx #See Equation 10 (Section IV) of the paper
+Ly_I  <- n * Lx #See Equation (12) in Section IV-A of the paper
 
 Lx_star  <- lambda_0 * (-log(1-p)) ^ (1/k_0)
 Ly_naive <- n * Lx_star
 
-if (k_0 > 1){ #See Equation 11 (Section IV) of the paper
+if (k_0 > 1){ #See Equation (13) in Section IV-A of the paper
   
   MGF_trunc <- function(t, k_0, lambda_0){
     # To avoid numerical overflow, the integration was limited to a 
@@ -56,33 +59,27 @@ if (k_0 > 1){ #See Equation 11 (Section IV) of the paper
   opt <- optimize(LyC_of_t, interval = c(1e-8, 10))
   t_star <- opt$minimum
   Ly_C <- opt$objective
-  t_star; Ly_C
   
 }else{
   Ly_C  <- Inf
 }
 
-Limites<-c(Ly_I,Ly_C,Ly_naive)
-Ly_0 <- min(Limites)
+Ly_0 <- min(Ly_I, Ly_C)
 cat(sprintf("Ly_0 -> Naive limit     = %.4f\n", Ly_naive))
 cat(sprintf("Ly_0 -> Inclusion limit = %.4f\n", Ly_I))
 cat(sprintf("Ly_0 -> Chernoff limit  = %.4f\n", Ly_C))
 cat(sprintf("Ly_0 -> Final limit     = %.4f\n", Ly_0))
 
-if (Ly_0 == Ly_naive) {
-  cat("Note: The Naive limit was the smallest. Compare it with the 
-      inclusion-based limit to ensure adequacy.\n")
-}
 
 ##### for H1 #####
 if (!is.null(k_1)) {
   Lx  <-  qweibull(p^(1/n), shape = k_1, scale = lambda_1)
-  Ly_I  <- n * Lx #See Equation 10 (Section IV) of the paper
+  Ly_I  <- n * Lx #See Equation (12) in Section IV-A of the paper
   
   Lx_star  <- lambda_1 * (-log(1-p)) ^ (1/k_1)
   Ly_naive <- n * Lx_star
   
-  if (k_1 > 1){ #See Equation 11 (Section IV) of the paper
+  if (k_1 > 1){ #See Equation (13) in Section IV-A of the paper
     
     MGF_trunc <- function(t, k_1, lambda_1){
       # To avoid numerical overflow, the integration was limited to a 
@@ -105,21 +102,15 @@ if (!is.null(k_1)) {
     opt <- optimize(LyC_of_t, interval = c(1e-8, 10))
     t_star <- opt$minimum
     Ly_C <- opt$objective
-    t_star; Ly_C
     
   }else{
     Ly_C  <- Inf
   }
   
-  Limites<-c(Ly_I,Ly_C,Ly_naive)
-  Ly_1 <- min(Limites)
+  Ly_1 <- min(Ly_I, Ly_C)
   cat(sprintf("Ly_1 -> Naive limit     = %.4f\n", Ly_naive))
   cat(sprintf("Ly_1 -> Inclusion limit = %.4f\n", Ly_I))
   cat(sprintf("Ly_1 -> Chernoff limit  = %.4f\n", Ly_C))
   cat(sprintf("Ly_1 -> Final limit     = %.4f\n", Ly_1))
   
-  if (Ly_1 == Ly_naive) {
-    cat("Note: The Naive limit was the smallest. Compare it with the 
-      inclusion-based limit to ensure adequacy.\n")
-  }
 }
