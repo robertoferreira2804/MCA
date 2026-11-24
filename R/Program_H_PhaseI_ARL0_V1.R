@@ -1,29 +1,7 @@
-# ============================================================
-# Program H: effect of estimating lambda and k from Phase I data
-#            on the conditional in-control ARL (application, Section IX)
-# ------------------------------------------------------------
-# True parameters (lambda0, k0) are those of the application.
-# For each Phase I size m_I (number of subgroups of size n) and
-# each replicate r = 1, ..., R:
-#   1. generate m_I * n observations from Weibull(lambda0, k0);
-#   2. estimate (lambda, k) by maximum likelihood (profile equation in k);
-#   3. compute L_y from the estimates (as in Program D) and the
-#      control limits with MCA-FFT using the estimates;
-#   4. compute the signal probability theta_r of these limits under
-#      the true parameters; CARL0_r = 1 / theta_r.
-# The distribution of Y under the true parameters is computed once,
-# with L_y computed from the true parameters, so that the row
-# m_I = Inf reproduces the known-parameter case.
-#
-# Output:
-#   - estimated limits (mean and SD over replicates);
-#   - conditional in-control ARL over replicates (AARL0, SDARL0,
-#     percentiles, P(CARL0 < 200)).
-#
-# The MCA-FFT function is identical to that of Program G, including
-# the 'stable' option (kernel by log-space differencing).
-# Uses the base package 'parallel' (replicates run on several cores).
-# ============================================================
+# Program H: Effect of Phase I parameter estimation on control limits
+# and conditional in-control ARL, using MCA-FFT.
+# Default example: Section IX-B, Table XIII (10,000 replications per Phase I size).
+
 rm(list = ls())
 t0 <- Sys.time()
 options(digits = 6)
@@ -41,20 +19,16 @@ R       <- 10000                      # replicates per Phase I size
 p_Ly    <- 1 - 1e-11                  # P(Y <= Ly), as in Program D
 stable  <- FALSE                       # TRUE: kernel by log-space differencing (no cancellation)
 
-# ============================================================
-# 2. FUNCTIONS (MCA-FFT, limits and signal probability as in Program G;
-#    L_y as in Program D)
-# ============================================================
+#============================================================
+  # 2. FUNCTIONS (MCA-FFT, limits and signal probability as in Program G;
+  #    L_y as in Program D)
+  # ============================================================
 # ------------------------------------------------------------
-# fY = b %*% M^n by a single FFT.
-# M is upper-triangular Toeplitz, so b %*% M^n is the n-fold
-# convolution of the normalised kernel q with itself:
-#   fY = Re( IFFT( FFT(q)^n ) ),
-# with q padded with zeros to a length N >= max(n(m-1)+1, d).
-# In R, fft(..., inverse = TRUE) omits the factor 1/N.
+# FFT convolution of the M* kernel, followed by truncation and renormalisation.
 # Returns fY, the midpoints, m, and the mass beyond Ly that is
 # discarded before renormalisation.
 # ------------------------------------------------------------
+
 mca_fft <- function(d, n, Ly, shape, scale, stable = TRUE) {
   delta <- Ly / d
   
@@ -171,10 +145,10 @@ summarise <- function(m_I, theta, L, U) {
 # Weibull ML estimates by the profile likelihood equation in k:
 #   sum(x^k log x) / sum(x^k) - 1/k - mean(log x) = 0,
 #   lambda = (mean(x^k))^(1/k).
-# Same estimator as fitdistr(x, "weibull"), solved in one dimension
-# (faster, and it never fails). x is rescaled by max(x) to avoid
-# overflow; the ratio in the equation is invariant to this rescaling.
+# The shape equation is solved in one dimension. Rescaling x by max(x)
+# avoids overflow without changing the ratio in the equation.
 # ------------------------------------------------------------
+
 weibull_ml <- function(x) {
   lx  <- log(x)
   c0  <- max(x)
