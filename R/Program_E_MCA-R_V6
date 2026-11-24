@@ -1,10 +1,7 @@
 # ============================================================
-# Program E (MCA-R): MCA with b %*% M^n evaluated in n steps
-# ------------------------------------------------------------
-# M is upper-triangular Toeplitz: every row is the kernel k shifted
-# one position, normalised by its row sum. Each step f <- f %*% M
-# is computed without building M, using only k and the row sums
-# (cost d * m per step).
+# Program E (MCA-R): Control limits and ARL for Weibull processes.
+# Applies the row-normalized transition matrix recursively without
+# constructing it, using the kernel from the first row of M*.
 # ============================================================
 rm(list = ls())
 t0 <- Sys.time()
@@ -13,7 +10,7 @@ options(digits = 6)
 # ============================================================
 # 1. INPUTS
 # ============================================================
-d <- 100000             # number of states
+d <- 10                # Section IV-C, Table III (didactic example)
 n <- 5                 # sample size
 stable <- FALSE        # TRUE: kernel by log-space differencing (no cancellation;
 # retains more kernel entries, so the runtime increases)
@@ -21,11 +18,12 @@ stable <- FALSE        # TRUE: kernel by log-space differencing (no cancellation
 # in-control
 lambda_0 <- 4.0        # Weibull scale
 k_0      <- 5.0        # Weibull shape
-Ly_0     <- 29.5555    # upper bound for Y (Program_D_Ly.R, same n)
-# didactic example (Tables II-III): d <- 10; Ly_0 <- 30
+Ly_0     <- 30         # Rounded from 29.5555 (Program D).
+# Table IV: use Ly_0 = 29.5555 and set d to the chosen table row.
 
-# out-of-control (k_1 <- NULL to skip ARL1)
-k_1      <- 5         # Weibull shape
+# Optional ARL1 example (Section IV-C): set d = 100000,
+# Ly_0 = 29.5555 and k_1 = 5 with the inputs below.
+k_1      <- NULL         # Weibull shape
 lambda_1 <- 3.5        # Weibull scale (NULL to use the mean shift 'sh')
 sh       <- -0.05      # relative shift in E[X], used only if lambda_1 = NULL
 Ly_1     <- 25.8611    # upper bound for Y (Program_D_Ly.R, same n)
@@ -90,6 +88,8 @@ fY <- f
 
 # --- control limits: weighted quantiles of the midpoints, snapped to a midpoint ---
 FY <- cumsum(fY)
+# To inspect the probabilities in Table III:
+# print(data.frame(midpoint = mid, probability = fY, cumulative = FY))
 q  <- c(pnorm(-3), 1 - pnorm(-3))
 CL <- sapply(q, function(p) {                   # weighted quantile, linear
   l <- max(c(1, which(FY <= p)))                 # interpolation of the c.d.f.
