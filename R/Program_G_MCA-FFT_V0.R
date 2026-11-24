@@ -9,7 +9,7 @@ options(digits = 6)
 # ============================================================
 # 1. INPUTS
 # ============================================================
-d <- 100000            # number of states
+d <- 1000           # number of states
 n <- 5                 # sample size
 stable <- TRUE         # TRUE: kernel by log-space differencing (no cancellation)
 
@@ -20,7 +20,7 @@ Ly_0     <- 29.5555    # upper bound for Y (Program_D_Ly.R, same n)
 # didactic example (Tables II-III): d <- 10; Ly_0 <- 30
 
 # out-of-control (k_1 <- NULL to skip ARL1)
-k_1      <- 5          # Weibull shape
+k_1      <- NULL          # Weibull shape
 lambda_1 <- 3.5        # Weibull scale (NULL to use the mean shift 'sh')
 sh       <- -0.05      # relative shift in E[X], used only if lambda_1 = NULL
 Ly_1     <- 25.8611    # upper bound for Y (Program_D_Ly.R, same n)
